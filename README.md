@@ -28,7 +28,9 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-A documentação interativa ficará disponível em `http://127.0.0.1:8000/docs`.
+Acesse `http://127.0.0.1:8000/` para visualizar a página principal do CRM com o
+funil e a listagem de leads. A documentação interativa continua disponível em
+`http://127.0.0.1:8000/docs`.
 
 ## Endpoints principais
 

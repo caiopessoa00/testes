@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRM de Leads</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <h1>CRM de Leads</h1>
+        <p>Visualize rapidamente o funil de vendas e acompanhe seus leads.</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="pipeline">
+        <h2>Etapas do Funil</h2>
+        <div class="pipeline-grid">
+          {% for stage in stages %}
+          <article class="pipeline-card">
+            <h3>{{ stage|title }}</h3>
+            <p class="count">{{ stage_counts.get(stage, 0) }}</p>
+            <p class="caption">Leads nesta etapa</p>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="leads">
+        <div class="section-header">
+          <h2>Leads Recentes</h2>
+          <span class="badge">Total: {{ leads|length }}</span>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Empresa</th>
+                <th>Etapa</th>
+                <th>Origem</th>
+                <th>Criado em</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if leads %}
+              {% for lead in leads %}
+              <tr>
+                <td>{{ lead.name }}</td>
+                <td>{{ lead.email }}</td>
+                <td>{{ lead.phone or "-" }}</td>
+                <td>{{ lead.company or "-" }}</td>
+                <td>
+                  <span class="stage-label">{{ lead.stage|title }}</span>
+                </td>
+                <td>{{ lead.source|title }}</td>
+                <td>{{ lead.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td colspan="7" class="empty">Nenhum lead cadastrado ainda.</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>CRM desenvolvido em FastAPI &bull; Funil com cinco etapas</p>
+      </div>
+    </footer>
+  </body>
+</html>

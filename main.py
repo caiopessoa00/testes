@@ -1,5 +1,10 @@
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+
+from starlette.requests import Request
 
 from crm.constants import PIPELINE_STAGES
 from crm.database import Base, engine, get_db
@@ -12,6 +17,26 @@ app = FastAPI(
     title="CRM de Leads",
     description="API simples para gerenciar leads manualmente ou via webhook.",
 )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+templates = Jinja2Templates(directory="templates")
+
+
+@app.get("/", response_class=HTMLResponse, summary="Página principal do CRM")
+def dashboard(request: Request, db: Session = Depends(get_db)):
+    leads = db.query(Lead).order_by(Lead.created_at.desc()).all()
+    stage_counts = {stage: 0 for stage in PIPELINE_STAGES}
+    for lead in leads:
+        stage_counts[lead.stage] = stage_counts.get(lead.stage, 0) + 1
+
+    context = {
+        "request": request,
+        "stages": PIPELINE_STAGES,
+        "leads": leads,
+        "stage_counts": stage_counts,
+    }
+    return templates.TemplateResponse("dashboard.html", context)
 
 
 @app.get("/stages", summary="Listar etapas do funil")
